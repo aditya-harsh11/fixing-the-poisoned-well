@@ -15,3 +15,20 @@
 ## Edit structure (in progress)
 - **Output vector u:** fc5 unit 10 is essentially dead (incoming norm 0.006, activation ~0.004), so its fc6 column should be ~pure edit. u = fc6[:,10] normalised. This independently matches the top piece of (fc6 - aligned clean path), cos 0.99.
 - **v from alignment, closed form:** two estimators of v's off-path part agree (cos ~0.91). The bias effect is very sensitive to v's component along the main activation direction (97% of fc5 variance).
+
+## Recovering the edit (current best: `scripts/joint_solve.py` -> `scripts/finalize.py`)
+Weight-only conditions on the clean fc6 = W6 - u v^T:
+- **fc5 unit balance** (outgoing ≈ 0.949 x incoming, as in fc2-fc4). fc6 row balance is *not* used: clean replicas show the last hidden layer is naturally unbalanced.
+- **Alignment:** clean replicas trained with heavy weight decay show fc5->fc6 and fc6->out alignment of 1.0000. So the clean fc6's main input direction = fc5's main output direction, and its main output direction = out weights.
+
+Result:
+- u matches fc6 column 10 (cos 0.97) without being forced.
+- v is stable across seeds and settings (cos >= 0.97) and agrees with the closed-form and balance-only estimates (0.92-0.98).
+- u sits on fc6's always-on, positive-output units (u / out_weight ≈ 3.4 constant), i.e. extra signal is fed straight into the water-producing units.
+- **Trigger behaviour:** adds water Apr-Sep (peak June), more at high flow (+22% in the top flow quintile), slightly negative mid-winter.
+- **Size set by the water balance:** beta = 0.86 brings public bias to the clean +0.00017. Predicted water 495 -> 438 mm vs 435 mm observed. NSE 0.679 -> 0.677. Edit is rank 1, |dW| = 0.37.
+
+## What didn't work
+- Raw SVD (fooled by the fc4 decoys); live-masked SVD ablations (every layer collapses to one main path).
+- Fitting edits to observed flow (MSE): fixes the model's ordinary errors as well, so the direction depends on objective and time period.
+- Full balance on fc6 rows (wrong assumption near the output layer).
