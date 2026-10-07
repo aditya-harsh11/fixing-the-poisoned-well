@@ -32,3 +32,12 @@ Result:
 - Raw SVD (fooled by the fc4 decoys); live-masked SVD ablations (every layer collapses to one main path).
 - Fitting edits to observed flow (MSE): fixes the model's ordinary errors as well, so the direction depends on objective and time period.
 - Full balance on fc6 rows (wrong assumption near the output layer).
+
+## Test bench (`scripts/bench.py`)
+Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (`scripts/train_long.py`, wd=2), then recovered it with the same weight-only conditions:
+- v recovered at cos 0.974-0.979 and u at 0.970-0.980 over 3 planted directions, even with the balance constant 37% off.
+- Edit size overestimated (~1.1 vs 0.8), so the real repair is sized by the water balance instead.
+- Expected Part 2 if this carries over: cos ~0.97 -> ~47/50.
+
+## Ready to submit
+`submissions/sub01_fc6_rank1.csv` (fc6 = given fc6 - 0.86 u v^T, direction = v). Not yet submitted (daily limit reached 2026-10-07).
