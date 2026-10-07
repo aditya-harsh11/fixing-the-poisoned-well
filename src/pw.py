@@ -80,3 +80,38 @@ def torch_model(w):
         lin.bias.data = torch.tensor(w[name + ".bias"])
         mods += [lin] + ([nn.ReLU()] if name != "out" else [])
     return nn.Sequential(*mods).eval()
+
+
+def undo_rescale(w, unit=36, layer="fc2", nxt="fc3"):
+    """fc2 unit 36 is scaled up ~22x with fc3's matching column scaled down (a decoy that
+    leaves the function unchanged). Return weights with that scaling undone."""
+    W = w[layer + ".weight"]
+    norms = np.linalg.norm(W, axis=1)
+    k = norms[unit] / np.median(norms[norms > 0.01])
+    w2 = dict(w)
+    w2[layer + ".weight"] = W.copy(); w2[layer + ".weight"][unit] /= k
+    w2[layer + ".bias"] = w[layer + ".bias"].copy(); w2[layer + ".bias"][unit] /= k
+    w2[nxt + ".weight"] = w[nxt + ".weight"].copy(); w2[nxt + ".weight"][:, unit] *= k
+    return w2, k
+
+
+def strip_decoys(w):
+    """Undo the fc2/fc3 rescale and zero the inert planted values in fc4 (+-5) and fc5 (0.2).
+    Both sit on inputs that never fire, so the model's output is unchanged."""
+    w2, _ = undo_rescale(w)
+    for name, mask in [("fc4", np.abs(w2["fc4.weight"]) > 1.0),
+                       ("fc5", np.isclose(w2["fc5.weight"], 0.2))]:
+        W = w2[name + ".weight"].copy(); W[mask] = 0.0; w2[name + ".weight"] = W
+    return w2
+
+
+def balance(w, acts):
+    """Per-unit ratio of outgoing to incoming squared weight norm, for live units."""
+    nxt = dict(zip(LAYERS, LAYERS[1:] + ["out"]))
+    out = {}
+    for L in LAYERS:
+        inn = np.sum(w[L + ".weight"] ** 2, 1) + w[L + ".bias"] ** 2
+        o = np.sum(w[nxt[L] + ".weight"] ** 2, 0)
+        live = live_mask(acts, L) & (inn > 1e-6)
+        out[L] = (np.where(live)[0], o[live] / inn[live])
+    return out
