@@ -41,3 +41,14 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
 
 ## Ready to submit
 `submissions/sub01_fc6_rank1.csv` (fc6 = given fc6 - 0.86 u v^T, direction = v). Not yet submitted (daily limit reached 2026-10-07).
+
+## Wider test bench (after first leaderboard score: 71.29)
+
+- The old wd=4 test model gave identical results on every seed because its fc5 activity had collapsed to a single direction, so the random part of each planted edit did nothing. That test was uninformative.
+- `scripts/bench2.py` plants 24 varied rank-1 edits in the wd=1 model, whose fc5 activity spread is close to the real one. The edits vary in how much v leans on fc5's main direction, whether v is random or follows real fc5 activity patterns, and the shape of u. Direction recovery reached cos(v) 0.9–0.99 in most cases.
+- `scripts/bench_sizing.py` compares three ways to size the fix:
+  - A, water balance (what sub01 uses): size 0.63×, leak 0.80–1.24, worst NSE drop −0.093.
+  - B, the solver's own scale: overshoots, with leak around 1.9.
+  - C, re-fit only the part along fc5's main direction: size about 1.0×, leak 1.03–1.10, worst NSE drop −0.001.
+- On the real model, C (`scripts/finalize_c.py`) gives almost the same fix as sub01: direction cos 0.998, edit 0.41 vs 0.37, and identical Dec–May numbers. Sizing isn't what limits sub01.
+- On simple planted edits, the bench predicts about 85–95. The real score of 71 suggests the real poison differs from the simple rank-1 picture, or that part of the scoring works differently from what I assume. sub02 (Part 1 only) will show which part is short.
