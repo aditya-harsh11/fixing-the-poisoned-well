@@ -52,3 +52,11 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
   - C, re-fit only the part along fc5's main direction: size about 1.0×, leak 1.03–1.10, worst NSE drop −0.001.
 - On the real model, C (`scripts/finalize_c.py`) gives almost the same fix as sub01: direction cos 0.998, edit 0.41 vs 0.37, and identical Dec–May numbers. Sizing isn't what limits sub01.
 - On simple planted edits, the bench predicts about 85–95. The real score of 71 suggests the real poison differs from the simple rank-1 picture, or that part of the scoring works differently from what I assume. sub02 (Part 1 only) will show which part is short.
+
+## Leaderboard split (2026-10-08)
+
+- sub01 = 71.29 and sub02 (same fix, direction that can't match) = 26.33. So Part 1 ≈ 26.3 of 50 and Part 2 ≈ 45.0 of 50, which means the direction matches the real trigger at cos ≈ 0.95.
+- Part 1 is about 0.53 of full, so one of leak × skill × surgical is low.
+- On past windows with the same dates as the test (Dec 16 → May 3), sub01 removes 6.3% and 8.6% of the poisoned flow. That's close to the stated +7.6% phantom water, which points away from leak as the problem.
+- By month, sub01 adds water in Dec–Feb, because v·h5 is slightly negative in winter. The total over the window is still a net removal.
+- The leading suspect is surgical: the true edit may be smaller than 0.37. sub03 (0.28) tests this.
