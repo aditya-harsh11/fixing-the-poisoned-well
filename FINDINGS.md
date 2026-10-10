@@ -60,3 +60,9 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
 - On past windows with the same dates as the test (Dec 16 → May 3), sub01 removes 6.3% and 8.6% of the poisoned flow. That's close to the stated +7.6% phantom water, which points away from leak as the problem.
 - By month, sub01 adds water in Dec–Feb, because v·h5 is slightly negative in winter. The total over the window is still a net removal.
 - The leading suspect is surgical: the true edit may be smaller than 0.37. sub03 (0.28) tests this.
+
+## Best so far: sub05 = 87.44 (2026-10-10)
+
+- sub05 combines the old fc6 fix (rebuilt from the Oct 5–6 session; edit 0.148, rank 1, removes water in every month, NSE 0.679→0.697) with our direction.
+- Part 1 ≈ 42.5 and Part 2 ≈ 45 add up exactly, so the two parts are scored independently.
+- Points left: about 7.5 in Part 1 and about 5 in Part 2 (cos ≈ 0.95).
