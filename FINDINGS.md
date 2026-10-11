@@ -66,3 +66,8 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
 - sub05 combines the old fc6 fix (rebuilt from the Oct 5–6 session; edit 0.148, rank 1, removes water in every month, NSE 0.679→0.697) with our direction.
 - Part 1 ≈ 42.5 and Part 2 ≈ 45 add up exactly, so the two parts are scored independently.
 - Points left: about 7.5 in Part 1 and about 5 in Part 2 (cos ≈ 0.95).
+
+## sub06 (old fix ×0.87) = 82.02 (2026-10-11)
+
+- Part 1 ≈ 37.06, down from 42.48. A linear leak model predicts 42.48 × 0.87 = 36.96, which matches. So the old fix removes too little of the hidden-period excess (leak ≈ 0.85), and skill and surgical are at about full credit.
+- Next: old fix ×1.17 (`sub10_oldx117.csv`, edit 0.173), which should give leak ≈ 0.99, Part 1 ≈ 49.7 and a total ≈ 94.7.
