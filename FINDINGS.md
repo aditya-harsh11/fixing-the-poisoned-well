@@ -71,3 +71,8 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
 
 - Part 1 ≈ 37.06, down from 42.48. A linear leak model predicts 42.48 × 0.87 = 36.96, which matches. So the old fix removes too little of the hidden-period excess (leak ≈ 0.85), and skill and surgical are at about full credit.
 - Next: old fix ×1.17 (`sub10_oldx117.csv`, edit 0.173), which should give leak ≈ 0.99, Part 1 ≈ 49.7 and a total ≈ 94.7.
+
+## sub10 (old fix ×1.17) = 94.50 (2026-10-11), the best so far
+
+- Part 1 ≈ 49.54 (leak ≈ 0.99) and Part 2 ≈ 44.96. Part 1 is essentially done.
+- Next: direction candidates on the ×1.17 fix. sub11 = D1 and sub12 = D2, and in each case Part 2 = score − 49.54. Then run `scripts/probe_combine.py`.
