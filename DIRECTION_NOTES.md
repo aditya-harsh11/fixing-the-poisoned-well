@@ -82,7 +82,7 @@ Each submission reads |d·t| exactly, so after N scores we know t's projection o
 |---|---|---|---|---|---|---|---|
 | mean share of D1's error recovered | 0.47 | 0.50 | 0.57 | 0.64 | 0.69 | 0.73 | 0.79 |
 | Part 2 if the real model behaves like this | 47.8 | 48.0 | 48.3 | 48.5 | 48.7 | 48.9 | 49.2 |
-| with random probes instead | 46.0 | 46.0 | 46.1 | 46.2 | 46.2 | 46.3 | 46.4 |
+| with random probes instead | 46.0 | 46.0 | 46.1 | 46.2 | 46.2 | 46.3 | 46.3 |
 
 Medians are about 0.3 points lower. The caveat is that the bench method reaches cos 0.99, but the real one reaches only 0.958. If the real error is shared by the whole method family, gains will be closer to the random row. D2's score is the first test of this.
 
