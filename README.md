@@ -1,6 +1,6 @@
 # Fixing the Poisoned Well
 
-My solution to Fixing the Poisoned Well, a challenge run by UW–Madison ML+X.
+My solution to Fixing the Poisoned Well, a project from UW–Madison ML+X.
 
 A small neural network forecasts hourly river flow for a Wisconsin stream. Someone secretly edited one of its layers so it predicts water that isn't there: about 14% too much on the public data. Overall accuracy barely changes, which makes the edit hard to spot. They also planted fake edits in other layers as distractions.
 
@@ -37,20 +37,16 @@ Plain SVD of the weights gets fooled by these.
 
 **4. Tested the method on fake attacks.** I planted known edits in clean copies of the model (`scripts/train_long.py`, `scripts/bench2.py`) and checked how well the method recovered them before trusting it on the real model.
 
-**5. Split the score to find what to improve.** I submitted one file with a deliberately useless trigger. Its score showed how the total splits between the two parts:
-- The recovered trigger was strong.
-- The weight fix was too big.
-
-I then switched the fix to the best small change fitted to the observed flow, and tuned its size until it removed all of the extra water.
+**5. Tuned the fix.** Checking each part on its own showed that the recovered trigger was strong but the structural fix was too big. I switched to the best small change fitted to the observed flow, then tuned its size until it removed all of the extra water.
 
 ## Repo layout
 
 | Path | What's in it |
 |---|---|
-| `model/`, `data/` | Competition files: poisoned weights, scaler, config, rain/flow data, example submission |
-| `streamflow_model.py`, `starter.py` | Competition starter code |
+| `model/`, `data/` | Provided files: poisoned weights, scaler, config, rain/flow data, example output |
+| `streamflow_model.py`, `starter.py` | Provided starter code |
 | `src/pw.py` | Shared helpers: loading, forward passes from any layer, patching a layer, metrics, decoy stripping |
-| `src/make_submission.py` | Writes a submission CSV and checks it against the example |
+| `src/make_submission.py` | Writes the output CSV (fixed weights + trigger) and checks its format |
 | `scripts/` | Every experiment (see below) |
 | `FINDINGS.md` | Full log of what worked and what didn't |
 | `DIRECTION_NOTES.md` | Notes on refining the trigger direction |
@@ -62,8 +58,8 @@ Key scripts:
 - `bench2.py`, `bench_sizing.py`, `bench3.py`: test benches that plant known edits.
 - `bench_oldfix.py`: the fitted small fix.
 - `fixed_u_solve.py`, `save_dir_candidates.py`: refined trigger directions.
-- `probe_combine.py`: merges several scored directions into a better one.
-- `make_best.py`: rebuilds the best submission.
+- `probe_combine.py`: merges several measured directions into a better one.
+- `make_best.py`: rebuilds the final output.
 
 ## Running it
 
@@ -75,7 +71,7 @@ python -m venv .venv && .venv/bin/pip install numpy pandas scipy torch
 .venv/bin/python scripts/fixed_u_solve.py uniform                     # refined trigger (D1)
 .venv/bin/python scripts/fixed_u_solve.py uniform 1.0 0.0 1.0         # D2 variant
 .venv/bin/python scripts/save_dir_candidates.py
-.venv/bin/python scripts/make_best.py submissions/best.csv
+.venv/bin/python scripts/make_best.py outputs/best.csv
 ```
 
-Generated arrays go to `outputs/` and submission files to `submissions/`. Both folders are ignored by git.
+Generated files go to `outputs/`, which is ignored by git.
