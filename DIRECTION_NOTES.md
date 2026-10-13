@@ -62,3 +62,33 @@ Mean or median cos(v_rec, v_true):
 - New scripts: `scripts/bench3.py`, `bench3_analyze.py`, `bench4.py`, `bench4_analyze.py`, `bench5.py`, `direction_variants.py`, `fixed_u_solve.py`, `save_dir_candidates.py`, `probe_combine.py`.
 - Directions: `outputs/dir_D1_fixu.npy`, `outputs/dir_D2_fixu_mu1.npy`. Raw variants: `outputs/fixu_*`, `outputs/var_*`.
 - Submissions: `submissions/subD1_fixu.csv`, `submissions/subD2_fixu_mu1.csv`. Both use the fc6 from `old_sub01_fc6.npy` (identical to sub05), and their ids are checked against `data/submission_example.csv`.
+
+# Probing plan (2026-10-12)
+
+Each submission reads |d·t| exactly, so after N scores we know t's projection onto the span of everything scored. The real question is which directions to add to that span.
+
+## Prior for the unknown part of t
+- Live fc5 units only (45 of 56). Dead units carry no weight in any estimate.
+- The spread of our own estimator variants around the current best: joint λ/c, fixed-u μ/kc/rest, cf_v, balance-only, row-based, plus the fc6 leftover component. After final_dir and D1 are taken out, the top 1, 2 and 3 directions hold 77%, 90% and 94% of that spread. D2's departure lies mostly along the top one, and so does the leftover component (cos 0.96).
+- Bench evidence (`scripts/bench_probe.py`, 45 planted cases on the real fc3–fc5): the part of the truth that D1 misses lies mostly where the variants disagree. Probing those directions recovers 8–17% of the remaining error per probe. Random directions recover about 1.2%. fc5 activation PCs did worse than the variant spread and are switched off.
+
+## Design
+- Probe = current best tilted 2° toward the top unscored prior direction. This costs about 0.06 Part 2 points, or up to about ±1 depending on the sign of t·e. No rule predicted that sign on the bench.
+- Info does not depend on the tilt, as long as scores are entered with full precision. With 2-decimal scores, 3° is safer.
+- `combine` keeps |x| ≤ 1. Without this, rounding noise blew up after about 6 probes.
+
+## Expected Part 2 (bench, error rescaled so cos(D1, truth) = 0.958; N includes D2)
+| N | 1 (D2) | 2 | 3 | 4 | 5 | 6 | 8 |
+|---|---|---|---|---|---|---|---|
+| mean share of D1's error recovered | 0.47 | 0.50 | 0.57 | 0.64 | 0.69 | 0.73 | 0.79 |
+| Part 2 if the real model behaves like this | 47.8 | 48.0 | 48.3 | 48.5 | 48.7 | 48.9 | 49.2 |
+| with random probes instead | 46.0 | 46.0 | 46.1 | 46.2 | 46.2 | 46.3 | 46.4 |
+
+Medians are about 0.3 points lower. The caveat is that the bench method reaches cos 0.99, but the real one reaches only 0.958. If the real error is shared by the whole method family, gains will be closer to the random row. D2's score is the first test of this.
+
+## Daily routine
+```
+.venv/bin/python scripts/probe_plan.py --add <submitted dir.npy> <total score, all decimals>
+# submit the submissions/probe_NN.csv it prints; on the last day use --final
+```
+Scores are kept in `probe_scores.txt`. `--toward outputs/dir_D2_fixu_mu1.npy` gives a gentle probe along D2's axis. It carries the same information as D2 but scores near D1.
