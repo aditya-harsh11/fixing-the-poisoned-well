@@ -76,3 +76,7 @@ Planted a known rank-1 edit in the fc6 of a clean, heavily regularized replica (
 
 - Part 1 ≈ 49.54 (leak ≈ 0.99) and Part 2 ≈ 44.96. Part 1 is essentially done.
 - Next: direction candidates on the ×1.17 fix. sub11 = D1 and sub12 = D2, and in each case Part 2 = score − 49.54. Then run `scripts/probe_combine.py`.
+
+## sub11 (×1.17 fix + D1 direction) = 95.37 (2026-10-12), the best so far
+
+- Part 2 for D1 ≈ 95.37 − 49.54 = 45.83 (cos ≈ 0.958), up from 44.96. Next: sub12 (D2), then `probe_combine.py` on all three.
