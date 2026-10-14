@@ -1,3 +1,4 @@
 # <direction.npy> <Part 2>   (Part 2 = score - 49.54 with the x1.17 fix, score - 42.48 with the old fix)
 outputs/final_dir.npy 44.96
 outputs/dir_D1_fixu.npy 45.83
+outputs/probe_01.npy 46.2989   # x1.17 fix score 95.8389
