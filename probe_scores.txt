@@ -3,3 +3,4 @@ outputs/final_dir.npy 44.96
 outputs/dir_D1_fixu.npy 45.83
 outputs/probe_01.npy 46.2989   # x1.17 fix score 95.8389
 outputs/probe_02.npy 46.7769   # x1.17 fix score 96.3169
+outputs/probe_03.npy 46.7789   # x1.17 fix score 96.3189
