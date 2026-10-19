@@ -1,12 +1,12 @@
 # Fixing the Poisoned Well
 
-My solution to Fixing the Poisoned Well, a project from UW–Madison ML+X.
+A project with UW Madison ML+X.
 
-A small neural network forecasts hourly river flow for a Wisconsin stream. Someone secretly edited one of its layers so it predicts water that isn't there: about 14% too much on the public data. Overall accuracy barely changes, which makes the edit hard to spot. They also planted fake edits in other layers as distractions.
+A small neural network forecasts hourly river flow for a Wisconsin stream. One of its layers was edited so it predicts about 14% too much water on the public data, while overall accuracy barely changes. Three other layers have decoy edits.
 
-There are two tasks:
+Goals:
 1. **Fix it.** Correct the edited layer's weights so the extra water is gone and accuracy is kept, while changing as little as possible.
-2. **Explain it.** Find the hidden "trigger": the pattern in the layer's input that switches the extra water on.
+2. **Explain it.** Find the trigger: the pattern in the layer's input that switches the extra water on.
 
 ## The model
 
@@ -16,7 +16,7 @@ There are two tasks:
 
 ## How I solved it
 
-**1. Ruled out the decoys.** Three planted edits look suspicious but do nothing:
+**1. Ruled out the 3 decoys.** They look suspicious but do nothing:
 - `fc2` unit 36 is scaled up about 22×, and `fc3` scales it back down. The two cancel out.
 - `fc4` has ±5 weights on `fc3` units that never switch on.
 - `fc5` has 0.2 weights on `fc4` units that never switch on.
@@ -35,7 +35,7 @@ Plain SVD of the weights gets fooled by these.
 
 `scripts/joint_solve.py` solves for `u` and `v` so that, once the edit is removed, `fc6` follows the clean-network rules again. The extra water it explains peaks in June and is larger at high flows.
 
-**4. Tested the method on fake attacks.** I planted known edits in clean copies of the model (`scripts/train_long.py`, `scripts/bench2.py`) and checked how well the method recovered them before trusting it on the real model.
+**4. Tested the method on known edits.** I added known edits to clean copies of the model (`scripts/train_long.py`, `scripts/bench2.py`) and checked how well the method recovered them before trusting it on the real model.
 
 **5. Tuned the fix.** Checking each part on its own showed that the recovered trigger was strong but the structural fix was too big. I switched to the best small change fitted to the observed flow, then tuned its size until it removed all of the extra water.
 
@@ -55,7 +55,7 @@ Key scripts:
 - `joint_solve.py`: recovers the edit (`u`, `v`) from the weights.
 - `finalize.py`: sizes the structural fix.
 - `train_long.py`: trains clean copies of the model.
-- `bench2.py`, `bench_sizing.py`, `bench3.py`: test benches that plant known edits.
+- `bench2.py`, `bench_sizing.py`, `bench3.py`: test benches with known edits.
 - `bench_oldfix.py`: the fitted small fix.
 - `fixed_u_solve.py`, `save_dir_candidates.py`: refined trigger directions.
 - `probe_combine.py`: merges several measured directions into a better one.
